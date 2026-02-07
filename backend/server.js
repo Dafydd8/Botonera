@@ -7,15 +7,18 @@ const cors = require("cors");
 
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 const server = http.createServer(app);
+
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: FRONTEND_URL, // ej: https://tuapp.vercel.app
     methods: ["GET", "POST"],
+    credentials: true,
   },
-});
+})
 
 app.get("/", (req, res) => res.send("Backend OK"));
 
