@@ -17,14 +17,7 @@ const io = new Server(server, {
   },
 });
 
-// 👉 AGREGADO: servir frontend build
-const frontendPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendPath));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
-
+app.get("/", (req, res) => res.send("Backend OK"));
 
 // Estado del juego (en memoria)
 let roundOpen = false;
