@@ -1,58 +1,100 @@
 # Botonera Trivia Web
 
-App web simple para jugar **trivia con amigos** usando el celu como botonera.
+App web para jugar trivia en tiempo real usando el celular como **botonera**.
 
-- Cada persona entra al sitio desde su dispositivo.
-- Elige si quiere **abrir un juego** (admin) o **unirse a un juego** (jugador).
-- El admin abre/cierra rondas.
-- Los jugadores ven una pantalla que dice _“Presiona para responder”_ y al tocar en cualquier lado envían su `buzz`.
-- Solo se registra **el primero** que toca; el resto ve quién llegó antes.
+Los jugadores entran desde su dispositivo, presionan para responder, y el sistema registra automáticamente quién tocó primero.
+
+---
+
+## 🧠 Cómo funciona
+
+* Un usuario crea o administra la partida
+* Los jugadores se unen desde sus dispositivos
+* El admin abre la ronda
+* Todos pueden hacer buzz
+* El backend registra **el primer toque**
+* Se muestra quién ganó el turno
+
+---
+
+## 🏗 Arquitectura
+
+La app está separada en dos servicios:
+
+| Parte    | Plataforma | Función         |
+| -------- | ---------- | --------------- |
+| Frontend | Vercel     | UI React        |
+| Backend  | Render     | API + Socket.IO |
+
+Comunicación:
+
+```
+React (browser)
+      ↓ WebSocket
+Render Backend (Node + Socket.IO)
+```
+
+No se sirve frontend desde backend.
 
 ---
 
 ## 🔧 Tecnologías
 
-- **Node.js + Express** → servidor HTTP  
-- **Socket.IO** → comunicación en tiempo real  
-- **React + Vite** → frontend  
-- El backend sirve el **build estático** de React desde `frontend/dist`.
+* Node.js
+* Express
+* Socket.IO
+* React
+* Vite
+* Render (hosting backend)
+* Vercel (hosting frontend)
 
 ---
 
-## 📦 Requisitos
+## 📦 Requisitos para desarrollo local
 
-- Node.js 18+
-- npm
-- (Opcional) ngrok para compartir el juego globalmente
+* Node.js 18+
+* npm
 
 ---
 
-## 🚀 Instalación
+## 🚀 Instalación (modo local)
 
-### 1. Clonar
+### Clonar repo
 
-```bash
-git clone <URL-DEL-REPO>
-cd <carpeta>
+```
+git clone <REPO_URL>
+cd <CARPETA>
 ```
 
-### 2. Frontend
+---
 
-```bash
+### Frontend
+
+```
 cd frontend
-npm install
-npm run build   # genera frontend/dist
-```
-
-### 3. Backend
-
-```bash
-cd ../backend
 npm install
 npm run dev
 ```
 
-La app se abre en:
+Abre en:
+
+```
+http://localhost:5173
+```
+
+---
+
+### Backend
+
+En otra terminal:
+
+```
+cd backend
+npm install
+npm run dev
+```
+
+Corre en:
 
 ```
 http://localhost:4000
@@ -60,58 +102,70 @@ http://localhost:4000
 
 ---
 
-## 📡 Jugar en LAN (misma WiFi)
+## 🔌 Variables de entorno
 
-Buscar tu IP local:
-
-```
-ipconfig
-```
-
-Tus amigos entran a:
+### Frontend (.env)
 
 ```
-http://TU-IP-LOCAL:4000
+VITE_BACKEND_URL=http://localhost:4000
+```
+
+En producción se reemplaza por URL de Render.
+
+---
+
+### Backend (Render env vars)
+
+```
+FRONTEND_URL=https://TU-APP.vercel.app
+```
+
+Usado para CORS.
+
+---
+
+## 🌍 Deploy
+
+### Backend → Render
+
+* Crear Web Service
+* Root directory: `backend`
+* Build command:
+
+```
+npm install
+```
+
+* Start command:
+
+```
+npm start
+```
+
+El servidor usa:
+
+```
+process.env.PORT
 ```
 
 ---
 
-## 🌍 Compartir por internet usando ngrok
+### Frontend → Vercel
 
-Con el backend corriendo:
-
-```bash
-ngrok http 4000
-```
-
-ngrok te dará una URL:
+* Importar repo
+* Root directory: `frontend`
+* Framework: Vite
+* Agregar env var:
 
 ```
-https://algo.ngrok-free.app
+VITE_BACKEND_URL=https://TU-BACK.onrender.com
 ```
 
-Esa URL es pública: todos pueden entrar y jugar.
+Deploy.
 
 ---
 
-## 🧪 Scripts
-
-### Frontend
-
-```
-npm run dev
-npm run build
-```
-
-### Backend
-
-```
-npm run dev
-```
-
----
-
-## 📂 Estructura
+## 📂 Estructura del proyecto
 
 ```
 backend/
@@ -120,14 +174,32 @@ backend/
 
 frontend/
   src/
-  dist/
+  index.html
   package.json
 ```
 
 ---
 
-## 📝 Notas
+## ⚠️ Limitaciones actuales
 
-- No usa base de datos.
-- Estado en memoria.
-- Ideal para juntadas, trivias y juegos rápidos.
+* Sin base de datos
+* Estado en memoria
+* Reiniciar backend borra partidas
+* Render free puede dormirse (cold start)
+
+---
+
+## 🧪 Futuras mejoras
+
+* Salas múltiples
+* Persistencia Redis
+* Auth admin
+* Ranking
+* Sonidos / animaciones buzz
+* UI mobile polish
+
+---
+
+## ❤️ Autor
+
+Proyecto experimental para jugar trivia con amigos y explorar realtime web apps.
